@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  just-a-python-env:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/opt/yijunx/code
+      - ~/etc/localtime:/opt/yijunx/etc/localtime
+      - ~/etc/timezone:/opt/yijunx/etc/timezone
+    command: ["tail -f /dev/null"]
