@@ -1,5 +1,13 @@
-# to correctly handle paypal one requires email
-# we added a initializer.
+# interface segreation can be done via inheritance or composition
+# say we want to add SMS auth to debit and paypal pay method
+
+# here we want to use inheritance
+# overall it is better to have several specific interface, instead of one general interface
+
+# say we want to add SMSauth to Payment Processor, but some payment method
+# does not require sms auth. this it is better to
+
+# 1 inherent the payment processor, and let that has a sms auth method
 
 
 from abc import abstractclassmethod, ABC
@@ -26,13 +34,27 @@ class PaymentProcessor(ABC):
         pass
 
 
-class DebitPaymentProcessor(PaymentProcessor):
+class PaymentProcessorSMS(PaymentProcessor):
+    @abstractclassmethod
+    def sms_auth(self):
+        pass
+
+
+class DebitPaymentProcessor(PaymentProcessorSMS):
     def __init__(self, security_code) -> None:
         self.security_code = security_code
+        self.sms_verified = False
 
     def pay(self, order: Order):
-        print(f"DEBITTT, security code is {self.security_code}")
-        order.status = "paid"
+        if self.sms_verified:
+            print(f"DEBITTT, security code is {self.security_code}")
+            order.status = "paid"
+        else:
+            raise Exception("not verified")
+
+    def sms_auth(self):
+        print("SMS authorized")
+        self.sms_verified = True
 
 
 class CreditPaymentProcessor(PaymentProcessor):
@@ -75,8 +97,8 @@ if __name__ == "__main__":
     order.add_item("bruh", 3, 8)
     print(order.total_price())
 
-    p = PaypalPaymentProcessor(email="haha@ha.com")
-
-    p.pay(order)
+    p = DebitPaymentProcessor(security_code="0000")
+    p.sms_auth()
+    p.pay(order) # will raise not verfied if not sms_authed
 
     print(order.status)

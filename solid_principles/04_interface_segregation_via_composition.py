@@ -1,5 +1,16 @@
-# to correctly handle paypal one requires email
-# we added a initializer.
+# interface segreation can be done via inheritance or composition
+# say we want to add SMS auth to debit and paypal pay method
+
+# here we want to use composition
+# overall it is better to have several specific interface, instead of one general interface
+
+# say we want to add SMSauth to Payment Processor, but some payment method
+# does not require sms auth. this it is better to:
+
+# 2 we create the auth class, and in the future we can have different auth methods
+# then we compose
+
+# here composition is a nicer idea
 
 
 from abc import abstractclassmethod, ABC
@@ -26,14 +37,38 @@ class PaymentProcessor(ABC):
         pass
 
 
+class Authorizor(ABC):
+    # this is for dependency inversion!!!!
+    @abstractclassmethod
+    def is_authorized(self) -> bool:
+        pass
+
+
+class SMSAuthorizor(ABC):
+
+    authorized = False
+
+    def verify_code(self, code):
+        print(f"verifing {code}")
+        self.authorized = True
+
+    def is_authorized(self):
+        return self.authorized
+
 class DebitPaymentProcessor(PaymentProcessor):
-    def __init__(self, security_code) -> None:
+    def __init__(self, security_code: str, authorizor: Authorizor) -> None:
+        """here authorizer expects Authorizer, not concrete SMSauth method!!!
+        this is an example of dependency inversion!!!
+        """
         self.security_code = security_code
+        self.authorizor = authorizor
 
     def pay(self, order: Order):
-        print(f"DEBITTT, security code is {self.security_code}")
-        order.status = "paid"
-
+        if self.authorizor.is_authorized():
+            print(f"DEBITTT, security code is {self.security_code}")
+            order.status = "paid"
+        else:
+            raise Exception("not authozied")
 
 class CreditPaymentProcessor(PaymentProcessor):
     def __init__(self, security_code) -> None:
@@ -69,14 +104,18 @@ class PaypalPaymentProcessor(PaymentProcessor):
 
 # if we want to add another payment processor, no need to modiy old code..
 if __name__ == "__main__":
+    print(__file__)
     order = Order()
 
     order.add_item("coke", 8, 3)
     order.add_item("bruh", 3, 8)
     print(order.total_price())
 
-    p = PaypalPaymentProcessor(email="haha@ha.com")
+    auth = SMSAuthorizor()
 
-    p.pay(order)
+    p = DebitPaymentProcessor(security_code="0000", authorizor=auth)
+
+    auth.verify_code(p.security_code)
+    p.pay(order) # will raise not verfied if not sms_authed
 
     print(order.status)
