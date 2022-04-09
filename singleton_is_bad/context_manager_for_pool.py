@@ -24,6 +24,7 @@ class ReusablePool:
         return r
     
     def release(self, r: Reusable):
+        # remember to reset object to the clean state...
         self.in_use.remove(r)
         self.free.append(r)
 
