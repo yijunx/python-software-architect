@@ -1,0 +1,22 @@
+{
+    "plugins": ["plugins.barb"],
+    "characters": [
+        {
+            "type": "wizard",
+            "name": "oz"
+        },
+        {
+            "type": "witcher",
+            "name": "geralt"
+        },
+        {
+            "type": "sorcerer",
+            "name": "vroooom"
+        },
+        {
+            "type": "barb",
+            "name": "wowow",
+            "weapon": "scythe"
+        }
+    ]
+}
