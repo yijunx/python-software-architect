@@ -16,9 +16,10 @@
 # this is also a dp problem
 class Solution:
     def isSubsequence(self, s: str, t: str) -> bool:
-        
+
         # just an edge case..
-        if s == "": return True
+        if s == "":
+            return True
 
         score = 0
 
