@@ -10,3 +10,9 @@ services:
       - ~/etc/localtime:/opt/yijunx/etc/localtime
       - ~/etc/timezone:/opt/yijunx/etc/timezone
     command: ["tail -f /dev/null"]
+
+  slow-server:
+    build:
+      context: ../fake_slow_server
+    ports:
+      - 8000:8000
