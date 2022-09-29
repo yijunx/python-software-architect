@@ -23,20 +23,20 @@ from typing import List
 
 class Solution:
     def minimumTotal(self, triangle: List[List[int]]) -> int:
-        min_sum_to_each_pos = triangle.copy()
+        # min_sum_to_each_pos = triangle.copy()
         # say len(triangle) jas 4 layers, 0,1,2,3
         layer = len(triangle) - 2  # start with layer 2
         while layer >= 0:
             for i, element in enumerate(triangle[layer]):
-                min_sum_to_each_pos[layer][i] = min(
-                    element + min_sum_to_each_pos[layer + 1][i],
-                    element + min_sum_to_each_pos[layer + 1][i + 1],
+                triangle[layer][i] = min(
+                    element + triangle[layer + 1][i],
+                    element + triangle[layer + 1][i + 1],
                 )
 
             layer -= 1
-        return min_sum_to_each_pos[0][0]
+        return triangle[0][0]
 
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.minimumTotal([[2], [3, 4], [6, 5, 7], [4, 1, 8, 3]]))
+    print(s.minimumTotal([[2], [3, 4], [6, 5, 7], [4, 3, 8, 1]]))
