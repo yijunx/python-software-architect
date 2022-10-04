@@ -15,6 +15,13 @@
 #   3 4
 #  6 5 7
 # 4 1 8 3
+
+# a new test case
+#    2
+#   3 4
+#  6 5 99
+# 1000 99 99 3
+
 # The minimum path sum from top to bottom is
 # 2 + 3 + 5 + 1 = 11 (underlined above).
 
