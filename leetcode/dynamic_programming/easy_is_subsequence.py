@@ -13,7 +13,6 @@
 # Input: s = "abc", t = "ahbgdc"
 # Output: true
 
-# this is also a dp problem
 class Solution:
     def isSubsequence(self, s: str, t: str) -> bool:
 

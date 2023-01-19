@@ -16,7 +16,7 @@
 #  6 5 7
 # 4 1 8 3
 
-# a new test case
+# a another test case
 #    2
 #   3 4
 #  6 5 99
