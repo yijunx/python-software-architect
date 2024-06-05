@@ -45,6 +45,7 @@ class Shark:
 
     # Class variables
     # so you dont have to put them in init
+    # and SHARK IS ALWAYS A FISH IN THE OCEAN!!
     animal_type = "fish"
     location = "ocean"
 
