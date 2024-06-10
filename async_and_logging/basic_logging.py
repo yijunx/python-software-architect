@@ -1,5 +1,5 @@
 import logging  # root logger
-from logger import logger
+from modern_logging.logger import logger
 
 # logging levels
 # 5 levels

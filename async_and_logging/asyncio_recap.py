@@ -3,7 +3,7 @@ import logging
 from random import randint
 from typing import AsyncIterable
 from http_get_functions import http_get_sync, http_get
-from logger import logger
+from modern_logging.logger import logger
 
 
 MAX_POKEMON = 898

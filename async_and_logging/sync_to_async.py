@@ -2,7 +2,7 @@ import asyncio
 import logging
 from time import perf_counter
 import requests
-from logger import logger
+from modern_logging.logger import logger
 
 
 async def counter(until: int = 15):

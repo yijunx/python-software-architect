@@ -1,5 +1,6 @@
 ###
 
+i have no idea why logging and asyncio 
 
 ### parallel vs concurrency
 
