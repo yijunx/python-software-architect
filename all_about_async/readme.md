@@ -1,7 +1,3 @@
-###
-
-i have no idea why logging and asyncio 
-
 ### parallel vs concurrency
 
 * parallel computing means each task runs on a separate processing unit, and do them together. means 2 lines 2 cashier. not good for python as the GIL.
