@@ -149,3 +149,53 @@
     * finally
         * coroutine, without become a task, cannot be executed
         * must use await to get the return values
+
+* what does `await` really do?
+    * there are some issues with above discussion
+        * when you await coroutune, await did not create task
+        * rather, it adds coroutine into the task!, the control did not get passed back to the control loop
+    * code
+        ```
+        async def main():
+            # just await
+            # await asyncio.sleep(0.1)
+
+            # using create task
+            await asyncio.create_task(
+                asyncio.sleep(0.1)
+            )
+        ```
+    * analysis: in the above code
+        * if we just await
+            * one task!, but it has 2 coroutine
+            * bytecode: 
+
+                ```
+                ...
+                GET_AWAITABLE
+                LOAD_CONST
+                YIELD_FROM
+                ...
+                ```
+
+            * GET_AWAITABLE
+                * _PyCoro_GetAwaitableIter: this helper function returns an awaitable for 'o'. if o is coroutine obj, returns o, other wise tp_as_async
+                * GET_AWAITABLE put whatever returned to the top of the stack!
+            * YIELD_FROM
+                * for whatever we await, it is either a coroutine obj or it is a generator. it uses _PyGen_Send (uses the send in the generator)
+                * and the core control part is here also. no matter it is task, coroutine or future, when it is finished, `retval` will be null. . Anything return in async def, is same as StopIteration puts the return value in the exception. and put the value on the top of the stack. The continue (continue the next byte code, in the infinite loop of EvalFrameDefault).
+                * if retval is not null, which means it is not finished yet. it will set the position of instruction back. `f->f_lasti -= SIZEOF(_Py_CODEUNIT)`.  then it saved the current status of this function. which means, the next time when you run this function, it will continue from here. finally `goto existing`. it did not finish executing the function, but it return some value, the retval, the value yielded.
+                * so this is how await stop half way inside a function, return something.
+            * source code of await
+                * coroutine is generator!
+                * Task inherets from future, future has the `__await__`, which allows you to `await xxxxxx()`. this await, when it is not done, it yields. it done, it returns.
+            * now task, how does it async, and wait each other?
+                * in the init of the task, there is a `self._loop.call_soon(...)`
+                * this `call_soon`, remember that the minimal object even loop can control is task, there will be always one task being executed.
+                * in the just await example, the top task is `main`.
+                * task will "tag" other tasks, says, when you finish, wake me up!. then this task disppears from even loop. (wake me up is a callback put at other tasks this task depends on.)
+                * the depending task, upon finishing will call `__schedule_callbacks`. it adds all the callbacks of him, to loop.call_soon. it did not call the callback, but ask the even loop to schedule!, this is make it "even" for all tasks and even loop also has the context of them all.
+
+
+        * using create task
+            * two tasks!
